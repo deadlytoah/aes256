@@ -1,5 +1,5 @@
 use aes_gcm::{
-    aead::{heapless::Vec, AeadCore, AeadInPlace, KeyInit, OsRng},
+    aead::{AeadCore, AeadInPlace, KeyInit, OsRng},
     Aes256Gcm,
 };
 use anyhow::Error;
@@ -9,10 +9,8 @@ fn main() -> Result<(), Error> {
     let cipher = Aes256Gcm::new(&key);
     let nonce = Aes256Gcm::generate_nonce(&mut OsRng); // 96-bits; unique per message
 
-    let mut buffer: Vec<u8, 128> = Vec::new(); // Note: buffer needs 16-bytes overhead for auth tag
-    buffer
-        .extend_from_slice("plaintext message".as_bytes())
-        .expect("buffer is full");
+    let mut buffer = Vec::new(); // Note: buffer needs 16-bytes overhead for auth tag
+    buffer.extend_from_slice("plaintext message".as_bytes());
 
     // Encrypt `buffer` in-place, replacing the plaintext contents with ciphertext
     cipher.encrypt_in_place(&nonce, b"", &mut buffer)?;
