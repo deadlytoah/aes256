@@ -3,10 +3,21 @@ use aes_gcm::{
     Aes256Gcm,
 };
 use anyhow::Error;
+use pbkdf2::pbkdf2_hmac_array;
+use sha2::Sha256;
+
+fn make_key_from_password(salt: &str, password: &str) -> [u8; 32] {
+    let password = password.as_bytes();
+    let salt = salt.as_bytes();
+    // number of iterations
+    const ITERATIONS: u32 = 600_000;
+
+    pbkdf2_hmac_array::<Sha256, 32>(password, salt, ITERATIONS)
+}
 
 fn main() -> Result<(), Error> {
-    let key = Aes256Gcm::generate_key(&mut OsRng);
-    let cipher = Aes256Gcm::new(&key);
+    let key = make_key_from_password("rms", "password");
+    let cipher = Aes256Gcm::new((&key).into());
     let nonce = Aes256Gcm::generate_nonce(&mut OsRng); // 96-bits; unique per message
 
     let mut buffer = Vec::new(); // Note: buffer needs 16-bytes overhead for auth tag
