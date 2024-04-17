@@ -3,9 +3,11 @@ use aes_gcm::{
     Aes256Gcm,
 };
 use anyhow::Error;
+use hex_literal::hex;
 use pbkdf2::pbkdf2_hmac_array;
 use sha2::Sha256;
 
+#[allow(unused)]
 fn make_key_from_password(salt: &str, password: &str) -> [u8; 32] {
     let password = password.as_bytes();
     let salt = salt.as_bytes();
@@ -16,7 +18,9 @@ fn make_key_from_password(salt: &str, password: &str) -> [u8; 32] {
 }
 
 fn main() -> Result<(), Error> {
-    let key = make_key_from_password("rms", "password");
+    // 32 byte random secret key for testing
+    let key = hex!("9a39 72b9 c37a 64f7 0919 dcc4 dbe7 bd61 5bc7 9815 33ed 6928 abd5 7aff 9339 d271");
+
     let cipher = Aes256Gcm::new((&key).into());
     let nonce = Aes256Gcm::generate_nonce(&mut OsRng); // 96-bits; unique per message
 

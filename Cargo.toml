@@ -8,5 +8,6 @@ edition = "2021"
 [dependencies]
 aes-gcm = { version = "0.10.*", features = ["heapless", "aes", "getrandom", "std"] }
 anyhow = "1.0.*"
+hex-literal = "0.4.*"
 pbkdf2 = { version = "0.12.*", features = ["sha2"] }
 sha2 = "0.10.*"
